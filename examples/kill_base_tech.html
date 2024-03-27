@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script src=" https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js "></script>
+<script src="../build/roslib.js"></script>
+
+<script>
+ // Connecting to ROS
+ // -----------------
+ var ros = new ROSLIB.Ros();
+
+ // If there is an error on the backend, an 'error' emit will be emitted.
+ ros.on('error', function(error) {
+   document.getElementById('connecting').style.display = 'none';
+   document.getElementById('connected').style.display = 'none';
+   document.getElementById('closed').style.display = 'none';
+   document.getElementById('error').style.display = 'inline';
+   console.log(error);
+ });
+
+ // Find out exactly when we made a connection.
+ ros.on('connection', function() {
+   console.log('Connection made!');
+   document.getElementById('connecting').style.display = 'none';
+   document.getElementById('error').style.display = 'none';
+   document.getElementById('closed').style.display = 'none';
+   document.getElementById('connected').style.display = 'inline';
+ });
+
+ ros.on('close', function() {
+   console.log('Connection closed.');
+   document.getElementById('connecting').style.display = 'none';
+   document.getElementById('connected').style.display = 'none';
+   document.getElementById('closed').style.display = 'inline';
+ });
+
+ // Create a connection to the rosbridge WebSocket server.
+ ros.connect('ws://localhost:9090');
+
+
+ // Calling a service
+ // -----------------
+
+ // First, we create a Service client with details of the service's name and service type.
+ var launcherClient = new ROSLIB.Service({
+   ros : ros,
+   name : '/kill_base_tech',
+   serviceType : 'rp_msgs/KillBaseTech' // fake
+ });
+
+ var request = new ROSLIB.ServiceRequest({
+   base_ns_base_tech : "room1/lc_talker"
+ });
+
+ // Finally, we call the /kill_base_tech service and get back the results in the callback. The result
+ // is a ROSLIB.ServiceResponse object.
+ launcherClient.callService(request, function(result) {
+   console.log('fin ' + result.response.val + ', err_msg: ' + result.response.err_msg);
+ });
+
+</script>
+</head>
+
+<body>
+  <h1>Simple roslib Example</h1>
+  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
+    console for the output.</p>
+  <ol>
+    <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
+    <li><tt>rp_launcher</tt></li>
+  </ol>
+  <div id="statusIndicator">
+    <p id="connecting">
+      Connecting to rosbridge...
+    </p>
+    <p id="connected" style="color:#00D600; display:none">
+      Connected
+    </p>
+    <p id="error" style="color:#FF0000; display:none">
+      Error in the backend!
+    </p>
+    <p id="closed" style="display:none">
+      Connection closed.
+    </p>
+  </div>
+</body>
+</html>
