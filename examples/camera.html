@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script src=" https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js "></script>
+<script src="../build/roslib.js"></script>
+</head>
+
+<body>
+  <!-- <p><img id="image_sub"/></p> -->
+  <p><canvas id="image_sub"></canvas></p>
+  <hr/>
+
+  <div id="statusIndicator">
+    <p id="connecting">
+      Connecting to rosbridge...
+    </p>
+    <p id="connected" style="color:#00D600; display:none">
+      Connected
+    </p>
+    <p id="error" style="color:#FF0000; display:none">
+      Error in the backend!
+    </p>
+    <p id="closed" style="display:none">
+      Connection closed.
+    </p>
+  </div>
+
+  <script>
+   var ros = new ROSLIB.Ros();
+   // If there is an error on the backend, an 'error' emit will be emitted.
+   ros.on('error', function(error) {
+     document.getElementById('connecting').style.display = 'none';
+     document.getElementById('connected').style.display = 'none';
+     document.getElementById('closed').style.display = 'none';
+     document.getElementById('error').style.display = 'inline';
+     console.log(error);
+   });
+
+   // Find out exactly when we made a connection.
+   ros.on('connection', function() {
+     console.log('Connection made!');
+     document.getElementById('connecting').style.display = 'none';
+     document.getElementById('error').style.display = 'none';
+     document.getElementById('closed').style.display = 'none';
+     document.getElementById('connected').style.display = 'inline';
+   });
+
+   ros.on('close', function() {
+     console.log('Connection closed.');
+     document.getElementById('connecting').style.display = 'none';
+     document.getElementById('connected').style.display = 'none';
+     document.getElementById('closed').style.display = 'inline';
+   });
+
+   // Create a connection to the rosbridge WebSocket server.
+   ros.connect('ws://localhost:9090');
+
+
+   // When the Rosbridge server shuts down, fill the "status" span with "closed"
+   ros.on('close', function() {
+     console.log('Connection to ROSBridge WebSocket server closed.');
+   });
+
+   var image = new ROSLIB.Topic({
+     ros : ros,
+     name : '/camera/color/image_raw',
+     messageType : 'sensor_msgs/Image'
+   });
+
+   image.subscribe(function(imgMes) {
+     const can = document.getElementById('image_sub');
+     can.width = imgMes.width;
+     can.height = imgMes.height;
+     const ctx = can.getContext("2d");
+
+     const imgData = ctx.createImageData(imgMes.width, imgMes.height);
+     const data = imgData.data;
+     const inData = atob(imgMes.data);
+
+     var j = 0; i = 4; // j data in , i data out
+     while( j < inData.length) {
+       const w1 = inData.charCodeAt(j++);  // read 3 16 bit words represent 1 pixel
+       const w2 = inData.charCodeAt(j++);
+       const w3 = inData.charCodeAt(j++);
+       if (!imgMes.is_bigendian) {
+         data[i++] = w1; // red
+         data[i++] = w2; // green
+         data[i++] = w3; // blue
+       } else {
+         data[i++] = (w1 >> 8) + ((w1 & 0xFF) << 8);
+         data[i++] = (w2 >> 8) + ((w2 & 0xFF) << 8);
+         data[i++] = (w3 >> 8) + ((w3 & 0xFF) << 8);
+       }
+       data[i++] = 255;  // alpha
+     }
+
+     ctx.putImageData(imgData, 0, 0);
+   });
+  </script>
+
+
+</body>
+</html>
