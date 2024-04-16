@@ -50,7 +50,7 @@
  });
 
  var request = new ROSLIB.ServiceRequest({
-   app_setting : "{'base_tech': [{'lc_talker': {'base_ns': 'room1', 'pose': ['0 0 0 0 0 0'], 'parent': 'dio_the_world', 'robot_ip': '0.0.0.1', 'reverse_port': 30001, 'script_sender_port': 30002, 'trajectory_port': 30003, 'sleep_sec': 3}}, {'lc_talker': {'base_ns': 'room2', 'sleep_sec': 1}}, {'dummy_robot': {'base_ns': 'dummy_robot'}}], 'task': {'test_node': {'path': '/home/ubuntu/local_mount/ros2_ws/src/rp_launcher/rp_launcher/test_app.py', 'rosparam1': 1919, 'rosparam2': 2}}}"
+   app_setting : "{'dep_mod': [{'lc_talker': {'mod_ns': 'room1', 'pose': ['0 0 0 0 0 0'], 'parent': 'dio_the_world', 'robot_ip': '0.0.0.1', 'reverse_port': 30001, 'script_sender_port': 30002, 'trajectory_port': 30003, 'sleep_sec': 3}}, {'lc_talker': {'mod_ns': 'room2', 'sleep_sec': 1}}, {'dummy_robot': {'mod_ns': 'dummy_robot'}}], 'user_app': {'test_node': {'path': '/home/ubuntu/local_mount/ros2_ws/src/rp_launcher/rp_launcher/test_app.py', 'rosparam1': 1919, 'rosparam2': 2}}}"
  });
 
  // Finally, we call the /run_rp_launcher service and get back the results in the callback. The result

@@ -45,12 +45,12 @@
  // First, we create a Service client with details of the service's name and service type.
  var launcherClient = new ROSLIB.Service({
    ros : ros,
-   name : '/kill_base_tech',
-   serviceType : 'rp_msgs/KillBaseTech' // fake
+   name : '/kill_dep_mod',
+   serviceType : 'rp_msgs/KillDepMod' // fake
  });
 
  var request = new ROSLIB.ServiceRequest({
-   base_ns_base_tech : "room1/lc_talker"
+   mod_ns_dep_mod: "dummy_robot/dummy_robot"
  });
 
  // Finally, we call the /kill_base_tech service and get back the results in the callback. The result
