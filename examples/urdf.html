@@ -70,7 +70,7 @@
 
    viewer.addObject(new ROS3D.Grid());
 
-   var tfClient = new ROSLIB.TFClient({
+   var tfClient = new ROSLIB.TF2Client({
      ros : ros,
      fixedFrame : 'world',
      angularThres : 0.01,
@@ -83,7 +83,8 @@
      ros : ros,
      tfClient : tfClient,
      rootObject : viewer.scene,
-     param : '/rviz2_moveit:robot_description',
+     // param : '/rviz2_moveit:robot_description',
+     param : '/robot_state_publisher:robot_description',
      path : 'http://localhost:8000/'
    });
 
@@ -98,8 +99,10 @@
   <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
     console for the output.</p>
   <ol>
-    <li><tt>roslaunch pr2_description upload_pr2.launch</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+    <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
+    <li><tt>ros2 run tf2_web_republisher_py tf2_web_republisher</tt></li>
+    <li><tt>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy initial_joint_controller:=joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true</tt></li>
+    <li><tt>python http_server.py</tt></li>
   </ol>
   <div id="statusIndicator">
     <p id="connecting">
