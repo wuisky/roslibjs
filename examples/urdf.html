@@ -20,6 +20,7 @@
    });
 
    // Get the URDF value from ROS.
+   // not necessary for rendering
    var param = new ROSLIB.Param({
      ros : ros,
      name : '/robot_state_publisher:robot_description'
@@ -102,7 +103,7 @@
     <li><tt>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</tt></li>
     <li><tt>ros2 run tf2_web_republisher_py tf2_web_republisher</tt></li>
     <li><tt>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=yyy.yyy.yyy.yyy initial_joint_controller:=joint_trajectory_controller use_fake_hardware:=true launch_rviz:=true</tt></li>
-    <li><tt>python http_server.py(execute inside container)</tt></li>
+    <li><tt>python http_server_path.py(execute inside container)</tt></li>
   </ol>
   <div id="statusIndicator">
     <p id="connecting">
